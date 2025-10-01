@@ -20,5 +20,6 @@ I couldnt come up with a good name for the things so I'm just calling them bodie
 ### Other Info
 + Bodies cap at 1000
 + Max zoom 5, min zoom 0.1
-+ More bodies will impact performance  
++ More bodies will impact performance
+  
 I had fun making this so I hope you enjoy messing around with it :)
