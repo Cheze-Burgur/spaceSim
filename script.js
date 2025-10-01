@@ -24,7 +24,7 @@ const toggleCoords = document.getElementById('toggleCoords');
 let G = parseFloat(gRange?.value ?? 2);       // gravitational constant (tunable)
 let timeScale = parseFloat(timeRange?.value ?? 1);
 const softening = 1.25; // softening distance to avoid singularities
-const MAX_BODIES = 800; // safety cap
+const MAX_BODIES = 1000; // safety cap
 const MERGE_ON_COLLIDE = true;
 
 let showVelocity = false;
@@ -175,7 +175,7 @@ addEventListener('wheel', (e) => {
     const oldZoom = camera.zoom;
     const zoomFactor = 1.08;
     let newZoom = camera.zoom * (delta > 0 ? 1 / zoomFactor : zoomFactor);
-    newZoom = Math.max(0.12, Math.min(6, newZoom));
+    newZoom = Math.max(0.1, Math.min(5, newZoom));
     const mx = e.clientX, my = e.clientY;
     const worldBefore = screenToWorld(mx, my);
     camera.zoom = newZoom;
