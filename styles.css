@@ -1,0 +1,134 @@
+:root {
+    --bg: #071421;
+    --panel: #0f2430;
+    --accent: #7ee1ff;
+    --muted: #9fb8c4;
+    --glass: rgba(255, 255, 255, 0.04);
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Roboto, Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1000px 600px at 10% 10%, rgba(10, 30, 40, 0.35), transparent), var(--bg);
+    color: #dff6ff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    text-decoration-style: dashed;
+}
+
+.topbar {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    z-index: 20;
+}
+
+.panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(0, 0, 0, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 10px 12px;
+    border-radius: 10px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.label {
+    font-size: 11px;
+    color: #bfeffb;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.small {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    touch-action: none;
+}
+
+/* important: touch-action none to allow pointer gestures */
+
+.help {
+    position: fixed;
+    right: 12px;
+    top: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    color: var(--muted);
+    font-size: 13px;
+    z-index: 20;
+    max-width: 320px;
+    text-align: right;
+}
+
+.footer {
+    position: fixed;
+    left: 12px;
+    bottom: 12px;
+    z-index: 20;
+    color: var(--muted);
+    font-size: 12px;
+    background: transparent;
+}
+
+.slider {
+    width: 140px;
+}
+
+.accent {
+    color: var(--accent);
+}
+
+.tiny {
+    font-size: 11px;
+    color: #9fb8c4;
+    margin-top: 4px;
+}
+
+.btn {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 6px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
