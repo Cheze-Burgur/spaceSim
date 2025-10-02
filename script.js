@@ -169,6 +169,26 @@ canvas.addEventListener('pointerup', (e) => {
     charging = null;
 });
 
+ /* Right click (contextmenu) to delete body */
+canvas.addEventListener('contextmenu', (e) => {
+    e.preventDefault(); // prevent the browser's right-click menu
+
+    const mouseWorld = screenToWorld(e.clientX, e.clientY);
+
+    // find nearest body under cursor
+    for (let i = bodies.length - 1; i >= 0; i--) {
+        const b = bodies[i];
+        const dx = mouseWorld.x - b.x;
+        const dy = mouseWorld.y - b.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist <= b.r) {
+            // inside the body radius → delete it
+            bodies.splice(i, 1);
+            break; // only delete the first one hit
+        }
+    }
+});
+
 /* zoom with wheel */
 addEventListener('wheel', (e) => {
     const delta = Math.sign(e.deltaY);
