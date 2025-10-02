@@ -3,15 +3,16 @@ So I made a physics simulation
 I couldnt come up with a good name for the things so I'm just calling them bodies (like celestial bodies) 
 
 ## Controls:
-+ WASD or Arrow Keys to move around the map
-+ Scroll to zoom
-+ Click to spawn
-+ Click and Hold to Charge
-+ Escape to pause
-+ R to recenter the camera
-+ I to show velocity indicators
-+ O to show coordinates of bodies
-+ P to show mass, velocity, and diameter of bodies
++ WASD or Arrow Keys to Move around the map
++ Scroll to Soom
++ Left Click to Spawn
++ Left Click and Hold to Charge
++ Right Click to Delete
++ Escape to Pause
++ R to Recenter the camera
++ I to Show velocity indicators
++ O to Show coordinates of bodies
++ P to Show mass, velocity, and diameter of bodies
 
 ## Settings
 + Gravity Strength ranges from 0 to 5
