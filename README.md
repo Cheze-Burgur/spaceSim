@@ -7,7 +7,8 @@ I couldnt come up with a good name for the things so I'm just calling them bodie
 + Scroll to Soom
 + Left Click to Spawn
 + Left Click and Hold to Charge
-+ Right Click to Delete
++ Left Click a body to edit its properties
++ Right Click a body to Delete it
 + Escape to Pause
 + R to Recenter the camera
 + I to Show velocity indicators
