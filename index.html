@@ -9,6 +9,8 @@
 </head>
 
 <body>
+    <div id="backdrop"></div>
+
     <canvas id="canvas"></canvas>
 
     <div class="topbar">
@@ -61,6 +63,20 @@
     </div>
 
     <div class="footer tiny">Made by <a href="https://github.com/Cheze-Burgur">@Cheze</a></div>
+
+    <div id="bodyMenu" class="modal panel" style="display: none;">
+        <h3>Edit Body</h3>
+        <label>X: <input id="bodyX" type="number"></label><br>
+        <label>Y: <input id="bodyY" type="number"></label><br>
+        <label>VX (km/s): <input id="bodyVX" type="number"></label><br>
+        <label>VY (km/s): <input id="bodyVY" type="number"></label><br>
+        <label>Mass (kg): <input id="bodyMass" type="number"></label><br>
+        <label>Radius (km): <input id="bodyR" type="number"></label><br>
+        <div style="margin-top:10px;">
+            <button id="applyBodyBtn" class="btn accent">Apply</button>
+            <button id="closeBodyBtn" class="btn">Close</button>
+        </div>
+    </div>
     <script src="script.js"></script>
 
 </body>
