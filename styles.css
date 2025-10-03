@@ -1,3 +1,20 @@
+@media (max-width: 600px) {
+    .modal {
+        width: 95%;
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .modal label {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modal input {
+        width: 100%;
+    }
+}
+
 :root {
     --bg: #071421;
     --panel: #0f2430;
@@ -46,6 +63,66 @@ a:hover {
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
     color: var(--muted);
     font-size: 13px;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--panel);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--accent);
+    font-size: 18px;
+}
+
+.modal label {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.modal input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 4px 6px;
+    width: 100px;
+    color: white;
+    text-align: right;
+}
+
+.modal .actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 
 .controls {
@@ -131,4 +208,22 @@ a:hover {
 
 .btn:hover {
     transform: translateY(-1px);
+}
+
+.btn.accent {
+    background: var(--accent);
+    color: #072027;
+    border: none;
+}
+
+.btn.accent:hover {
+    filter: brightness(1.1);
+}
+
+#backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1500;
 }
