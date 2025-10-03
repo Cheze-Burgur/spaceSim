@@ -21,7 +21,7 @@ const toggleProperties = document.getElementById('toggleProperties');
 const toggleCoords = document.getElementById('toggleCoords');
 
 /* Globals & parameters */
-let G = parseFloat(gRange?.value ?? 2);       // gravitational constant (tunable)
+let G = parseFloat(gRange?.value ?? 2); // gravitational constant (tunable)
 let timeScale = parseFloat(timeRange?.value ?? 1);
 const softening = 1.25; // softening distance to avoid singularities
 const MAX_BODIES = 1000; // safety cap
@@ -55,33 +55,34 @@ toggleCoords.addEventListener('click', () => { showCoords = !showCoords; toggleC
 addEventListener('keydown', e => {
     const k = e.key.toLowerCase();
     keys[k] = true;
-
-    switch (k) {
-        case 'escape':
-            paused = !paused;
-            pauseBtn.textContent = paused ? 'Resume Sim (ESC)' : 'Pause Sim (ESC)';
-            break;
-        case 'c':
-            bodies = [];
-            break;
-        case 'r':
-        case 'h':
-            camera.x = 0;
-            camera.y = 0;
-            camera.zoom = 1;
-            break;
-        case 'i': // toggle velocity indicator
-            showVelocity = !showVelocity;
-            toggleVel.style.opacity = showVelocity ? '1' : '0.7';
-            break;
-        case 'p':
-            showProperties = !showProperties;
-            toggleProperties.style.opacity = showProperties ? '1' : '0.7';
-            break;
-        case 'o':
-            showCoords = !showCoords;
-            toggleCoords.style.opacity = showCoords ? '1' : '0.7';
-            break;
+    if (!menuOpen) {
+        switch (k) {
+            case 'escape':
+                paused = !paused;
+                pauseBtn.textContent = paused ? 'Resume Sim (ESC)' : 'Pause Sim (ESC)';
+                break;
+            case 'c':
+                bodies = [];
+                break;
+            case 'r':
+            case 'h':
+                camera.x = 0;
+                camera.y = 0;
+                camera.zoom = 1;
+                break;
+            case 'i': // toggle velocity indicator
+                showVelocity = !showVelocity;
+                toggleVel.style.opacity = showVelocity ? '1' : '0.7';
+                break;
+            case 'p':
+                showProperties = !showProperties;
+                toggleProperties.style.opacity = showProperties ? '1' : '0.7';
+                break;
+            case 'o':
+                showCoords = !showCoords;
+                toggleCoords.style.opacity = showCoords ? '1' : '0.7';
+                break;
+        }
     }
 });
 addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
@@ -95,6 +96,18 @@ let chargeStart = 0;
 let charging = null;
 let activePointerId = null;
 
+let menuOpen = false;
+let selectedBody = null;
+const bodyMenu = document.getElementById('bodyMenu');
+const bodyX = document.getElementById('bodyX');
+const bodyY = document.getElementById('bodyY');
+const bodyVX = document.getElementById('bodyVX');
+const bodyVY = document.getElementById('bodyVY');
+const bodyMass = document.getElementById('bodyMass');
+const bodyR = document.getElementById('bodyR');
+const applyBodyBtn = document.getElementById('applyBodyBtn');
+const closeBodyBtn = document.getElementById('closeBodyBtn');
+
 function screenToWorld(sx, sy) {
     return {
         x: camera.x + (sx - canvas.width / 2) / camera.zoom,
@@ -104,16 +117,32 @@ function screenToWorld(sx, sy) {
 
 // Event handlers
 canvas.addEventListener('pointerdown', (e) => {
-    // only respond to primary button
-    if (e.button !== 0) return;
-    isDown = true;
-    activePointerId = e.pointerId;
-    downScreen = { x: e.clientX, y: e.clientY };
-    nowScreen = { ...downScreen };
-    downWorld = screenToWorld(e.clientX, e.clientY);
-    chargeStart = performance.now();
-    charging = 2;
-    canvas.setPointerCapture(e.pointerId);
+    if (menuOpen) return; // ignore if menu open
+
+    // left click
+    if (e.button === 0) {
+        const worldPos = screenToWorld(e.clientX, e.clientY);
+        // check if clicked on body
+        for (let i = bodies.length - 1; i >= 0; i--) {
+            const b = bodies[i];
+            const dx = worldPos.x - b.x;
+            const dy = worldPos.y - b.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist <= b.r) {
+                openBodyMenu(b);
+                return;
+            }
+        }
+        // else → begin spawn logic
+        isDown = true;
+        activePointerId = e.pointerId;
+        downScreen = { x: e.clientX, y: e.clientY };
+        nowScreen = { ...downScreen };
+        downWorld = screenToWorld(e.clientX, e.clientY);
+        chargeStart = performance.now();
+        charging = 2;
+        canvas.setPointerCapture(e.pointerId);
+    }
 });
 
 canvas.addEventListener('pointermove', (e) => {
@@ -169,7 +198,7 @@ canvas.addEventListener('pointerup', (e) => {
     charging = null;
 });
 
- /* Right click (contextmenu) to delete body */
+/* Right click (contextmenu) to delete body */
 canvas.addEventListener('contextmenu', (e) => {
     e.preventDefault(); // prevent the browser's right-click menu
 
@@ -188,6 +217,7 @@ canvas.addEventListener('contextmenu', (e) => {
         }
     }
 });
+
 
 /* zoom with wheel */
 addEventListener('wheel', (e) => {
@@ -336,10 +366,10 @@ function drawBody(b) {
         ctx.textBaseline = 'top';
 
         const velMag = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
-        const displayMass = (b.mass / 1000).toFixed(1);
+        const displayMass = (b.mass).toFixed(1);
         const displayVel = velMag.toFixed(1);
         const displayRad = (b.r / 10).toFixed(1);
-        const propText = `m:${displayMass} MT  v:${displayVel} km/s  r:${displayRad} km`;
+        const propText = `m:${displayMass} kg  v:${displayVel} km/s  r:${displayRad} km`;
 
         const padding = 4;
         const textY = s.y + sr + padding;
@@ -421,14 +451,16 @@ function update() {
     // camera movement
     const camSpeed = 480 / Math.sqrt(camera.zoom);
     let mvx = 0, mvy = 0;
-    if (keys['w'] || keys['arrowup']) mvy -= 1;
-    if (keys['s'] || keys['arrowdown']) mvy += 1;
-    if (keys['a'] || keys['arrowleft']) mvx -= 1;
-    if (keys['d'] || keys['arrowright']) mvx += 1;
-    if (mvx !== 0 || mvy !== 0) {
-        const len = Math.hypot(mvx, mvy) || 1;
-        camera.x += (mvx / len) * camSpeed * dt;
-        camera.y += (mvy / len) * camSpeed * dt;
+    if (!menuOpen) {
+        if (keys['w'] || keys['arrowup']) mvy -= 1;
+        if (keys['s'] || keys['arrowdown']) mvy += 1;
+        if (keys['a'] || keys['arrowleft']) mvx -= 1;
+        if (keys['d'] || keys['arrowright']) mvx += 1;
+        if (mvx !== 0 || mvy !== 0) {
+            const len = Math.hypot(mvx, mvy) || 1;
+            camera.x += (mvx / len) * camSpeed * dt;
+            camera.y += (mvy / len) * camSpeed * dt;
+        }
     }
 
     if (!paused) {
@@ -467,7 +499,7 @@ function update() {
 
 /* grid drawing */
 function drawGrid() {
-    const step = 50;
+    const step = 25;
     const left = camera.x - (canvas.width / 2) / camera.zoom;
     const right = camera.x + (canvas.width / 2) / camera.zoom;
     const top = camera.y - (canvas.height / 2) / camera.zoom;
@@ -499,6 +531,41 @@ function drawGrid() {
     ctx.moveTo(0, c.y); ctx.lineTo(canvas.width, c.y);
     ctx.stroke();
 }
+
+function openBodyMenu(body) {
+    selectedBody = body;
+    menuOpen = true;
+    paused = true;
+    pauseBtn.textContent = "Resume Sim (ESC)";
+    // populate fields
+    bodyX.value = body.x.toFixed(0);
+    bodyY.value = -(body.y.toFixed(0));
+    bodyVX.value = body.vx.toFixed(1);
+    bodyVY.value = -(body.vy.toFixed(1));
+    bodyMass.value = body.mass.toFixed(1);
+    bodyR.value = body.r.toFixed(1);
+    bodyMenu.style.display = "block";
+    document.getElementById("backdrop").style.display = "block";
+}
+
+function closeBodyMenu() {
+    bodyMenu.style.display = "none";
+    document.getElementById("backdrop").style.display = "none";
+    menuOpen = false;
+    selectedBody = null;
+}
+
+applyBodyBtn.addEventListener('click', () => {
+    if (!selectedBody) return;
+    selectedBody.x = parseFloat(bodyX.value);
+    selectedBody.y = -(parseFloat(bodyY.value));
+    selectedBody.vx = parseFloat(bodyVX.value);
+    selectedBody.vy = -(parseFloat(bodyVY.value));
+    selectedBody.mass = parseFloat(bodyMass.value);
+    selectedBody.r = parseFloat(bodyR.value);
+    closeBodyMenu();
+});
+closeBodyBtn.addEventListener('click', closeBodyMenu);
 
 /* initial scene */
 function initScene() {
