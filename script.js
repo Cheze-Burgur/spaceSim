@@ -566,6 +566,12 @@ applyBodyBtn.addEventListener('click', () => {
     closeBodyMenu();
 });
 closeBodyBtn.addEventListener('click', closeBodyMenu);
+deleteBodyBtn.addEventListener('click', () => {
+    if (!selectedBody) return;
+    const index = bodies.indexOf(selectedBody);
+    if (index !== -1) bodies.splice(index, 1);
+    closeBodyMenu();
+});
 
 /* initial scene */
 function initScene() {
