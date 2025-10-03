@@ -220,6 +220,10 @@ a:hover {
     filter: brightness(1.1);
 }
 
+#deleteBodyBtn:hover {
+    filter: brightness(0.9);
+}
+
 #backdrop {
     display: none;
     position: fixed;
